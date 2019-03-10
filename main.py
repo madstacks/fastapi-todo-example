@@ -21,7 +21,12 @@ async def error_handler(request, exc):
     })
 
 
-@app.get('/todos', response_model=List[TodoItem], summary='Get a list of todo items')
+@app.get(
+    '/todos',
+    summary='Get a list of todo items',
+    tags=['todos'],
+    response_model=List[TodoItem],
+)
 async def get_todos(
     limit: int = Query(None, description='Limit the number of items returned', le=100)
 ):
@@ -29,7 +34,12 @@ async def get_todos(
     return TODOS[0:limit]
 
 
-@app.get('/todos/{todo_id}', response_model=TodoItem, summary='Get a single todo item')
+@app.get(
+    '/todos/{todo_id}',
+    summary='Get a single todo item',
+    tags=['todos'],
+    response_model=TodoItem,
+)
 async def get_todo(
     todo_id: int = Path(..., description='A todo item ID number to lookup')
 ):
@@ -40,7 +50,13 @@ async def get_todo(
         raise HTTPException(404, 'Todo item not found')
 
 
-@app.post('/todos', status_code=201, response_model=TodoItem, summary='Add a todo item')
+@app.post(
+    '/todos',
+    summary='Add a todo item',
+    tags=['todos'],
+    status_code=201,
+    response_model=TodoItem,
+)
 async def create_todo(todo: TodoItem):
     item = todo.dict()
     item['id'] = len(TODOS) + 1
