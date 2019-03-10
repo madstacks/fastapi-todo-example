@@ -17,7 +17,7 @@ with open('todos.json') as f:
 @app.exception_handler(Exception)
 async def error_handler(request, exc):
     return JSONResponse({
-        'detaul': f'{exc}'
+        'detail': f'{exc}'
     })
 
 
