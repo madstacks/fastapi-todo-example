@@ -1,15 +1,24 @@
 import json
-
 from typing import List
 
-from fastapi import FastAPI, Query, Path
+from fastapi import FastAPI, Query, Path, HTTPException
+from starlette.responses import JSONResponse
+
 from models import TodoItem
+
 
 app = FastAPI()
 
 # temporary until a real DB is in place
 with open('todos.json') as f:
     TODOS = json.load(f)
+
+
+@app.exception_handler(Exception)
+async def error_handler(request, exc):
+    return JSONResponse({
+        'detaul': f'{exc}'
+    })
 
 
 @app.get('/todos', response_model=List[TodoItem], summary='Get a list of todo items')
@@ -25,7 +34,10 @@ async def get_todo(
     todo_id: int = Path(..., description='A todo item ID number to lookup')
 ):
     """Get a single to do item"""
-    return TODOS[todo_id - 1]
+    try:
+        return TODOS[todo_id - 1]
+    except IndexError:
+        raise HTTPException(404, 'Todo item not found')
 
 
 @app.post('/todos', status_code=201, response_model=TodoItem, summary='Add a todo item')
