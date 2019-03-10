@@ -5,7 +5,7 @@ from models import TodoItem
 
 app = FastAPI()
 
-
+# temporary until a real DB is in place
 with open('todos.json') as f:
     TODOS = json.load(f)
 
