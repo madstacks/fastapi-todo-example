@@ -1,6 +1,6 @@
 import json
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Path
 from models import TodoItem
 
 app = FastAPI()
@@ -11,13 +11,18 @@ with open('todos.json') as f:
 
 
 @app.get('/todos')
-async def get_todos(limit: int = 10):
+async def get_todos(
+    limit: int = Query(None, description='Limit the number of items returned', le=100)
+):
     """Get a list of things to do"""
+    print(limit)
     return TODOS[0:limit]
 
 
 @app.get('/todos/{todo_id}')
-async def get_todo(todo_id: int):
+async def get_todo(
+    todo_id: int = Path(..., description='A todo item ID number to lookup')
+):
     """Get a single to do item"""
     return TODOS[todo_id - 1]
 
